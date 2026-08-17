@@ -1,4 +1,4 @@
-#  Parte 1 : Ánalisis de los sistemas
+#  Parte 1 : Análisis de los sistemas
 ## Sistema 1 – Rate Monotonic
 
 ### Datos
@@ -1368,6 +1368,9 @@ T1 > T2 > T3 > T4
 y, de acuerdo con el análisis de tiempos de respuesta, todas las tareas cumplen sus respectivos deadlines.
 
 Por lo tanto, **el Sistema 3 es planificable mediante Rate Monotonic**.
+
+---
+
 
 ---
 
