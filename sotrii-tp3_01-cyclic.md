@@ -1,3 +1,5 @@
+#  Análisis de los sitemas
+
 ## Sistema 1 – Cyclic Scheduling
 
 ### Datos del sistema
@@ -1147,3 +1149,34 @@ U = 0,90 \leq 1
 ```
 
 pero dicha alternativa corresponde a una planificación diferente y no al Cyclic Scheduling original analizado en este sistema.
+
+# Configuración de FreeRTOS para Cyclic Scheduling
+
+Para implementar una planificación cíclica utilizando FreeRTOS se debe configurar un esquema **estático y cooperativo**, basado en un calendario de ejecución previamente definido.
+
+El sistema debe utilizar el **tick de FreeRTOS** como referencia temporal para generar las activaciones de las tareas. El período secundario debe ser compatible con el tick del sistema:
+
+```math
+T_S = K \cdot Tick
+```
+
+Las tareas deben ejecutarse según el calendario establecido y utilizando un comportamiento **Run to Completion**: una vez que una tarea comienza su ejecución, debe finalizar antes de permitir la ejecución de otra tarea.
+
+```text
+Cyclic Scheduling → calendario fijo + tick + scheduler cooperativo + Run to Completion.
+```
+
+Por lo tanto, la configuración debe contemplar:
+
+* un tick de sistema adecuado para representar el período secundario;
+* un planificador cooperativo;
+* tareas definidas estáticamente;
+* activaciones periódicas según el calendario calculado;
+* ejecución de las tareas **Run to Completion**;
+* evitar la interrupción de una tarea por otra durante su ejecución.
+
+Este tipo de configuración busca mantener el comportamiento **determinista y predecible** propio de los Sistemas Gobernados por Tiempo.
+
+Sin embargo, **no resulta conveniente utilizar FreeRTOS para una planificación estrictamente cíclica**, ya que el calendario de ejecución puede definirse directamente de forma estática sin necesitar las capacidades generales de planificación y gestión de tareas que proporciona un RTOS. En este caso, un planificador cíclico dedicado sería una solución más simple y directa.
+
+**Conclusión:** FreeRTOS puede configurarse para reproducir un esquema de Cyclic Scheduling mediante un planificador cooperativo, un tick adecuado y tareas *Run to Completion*, pero **no es la alternativa más conveniente cuando la planificación ya está completamente determinada de antemano**.
