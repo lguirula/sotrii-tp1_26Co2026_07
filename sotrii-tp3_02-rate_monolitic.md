@@ -1370,6 +1370,698 @@ y, de acuerdo con el análisis de tiempos de respuesta, todas las tareas cumplen
 Por lo tanto, **el Sistema 3 es planificable mediante Rate Monotonic**.
 
 ---
+ 
+## Sistema 4 – Rate Monotonic
+
+### Datos
+
+| Tarea | C | T = D | Prioridad |
+| ----- | -: | ----: | --------: |
+| T1    | 0,5 |     4 | 1 |
+| T2    | 1 |     5 | 2 |
+| T3    | 2 |    10 | 3 |
+| T4    | 9 |    24 | 4 |
+
+En Rate Monotonic, la prioridad se asigna según el período de la tarea: **a menor período, mayor prioridad**.
+
+Por lo tanto:
+
+```text
+T1 > T2 > T3 > T4
+````
+
+### Factor de utilización
+
+El factor de utilización de cada tarea es:
+
+```math
+U_i = \frac{C_i}{T_i}
+```
+
+```math
+U_1 = \frac{0,5}{4} = 0,125
+```
+
+```math
+U_2 = \frac{1}{5} = 0,20
+```
+
+```math
+U_3 = \frac{2}{10} = 0,20
+```
+
+```math
+U_4 = \frac{9}{24} = 0,375
+```
+
+Por lo tanto:
+
+```math
+U = 0,125 + 0,20 + 0,20 + 0,375 = 0,90
+```
+
+```math
+U = 90\%
+```
+
+### Hiperperíodo
+
+El hiperperíodo se obtiene como el mínimo común múltiplo de los períodos:
+
+```math
+H = MCM(4,5,10,24)
+```
+
+```math
+H = 120
+```
+
+### Período secundario
+
+El período secundario corresponde al Cyclic Scheduling. Para Rate Monotonic **no se utiliza como parámetro de planificación**, ya que el planificador trabaja mediante prioridades.
+
+Por lo tanto:
+
+```text
+Período secundario: no aplica
+```
+
+---
+
+### Test de Garantía
+
+#### 1. Prioridades
+
+Las prioridades se asignan según el período:
+
+* T1: `T = 4` → prioridad 1
+* T2: `T = 5` → prioridad 2
+* T3: `T = 10` → prioridad 3
+* T4: `T = 24` → prioridad 4
+
+Por lo tanto:
+
+```text
+T1 > T2 > T3 > T4
+```
+
+#### 2. Factor de utilización
+
+```math
+U = 0,90 < 1
+```
+
+**Condición de carga: CUMPLE.**
+
+El factor de carga total es menor al 100%.
+
+#### 3. Test de utilización de Rate Monotonic
+
+Para `n = 4` tareas, el límite suficiente de utilización de Rate Monotonic es:
+
+```math
+U_{RM} = n(2^{1/n}-1)
+```
+
+```math
+U_{RM} = 4(2^{1/4}-1)
+```
+
+```math
+U_{RM} \approx 0,757
+```
+
+El sistema tiene:
+
+```math
+U = 0,90
+```
+
+Por lo tanto:
+
+```math
+0,90 > 0,757
+```
+
+**Test de utilización: NO CUMPLE.**
+
+Esto no permite concluir por sí solo que el sistema sea imposible de planificar, por lo que se realiza el análisis de tiempos de respuesta.
+
+---
+
+### Análisis de tiempos de respuesta
+
+#### T1
+
+Como T1 tiene la mayor prioridad:
+
+```math
+R_1 = C_1
+```
+
+```math
+R_1 = 0,5
+```
+
+Comparando con su deadline:
+
+```math
+0,5 \leq 4
+```
+
+→ ✅
+
+**T1 cumple.**
+
+#### T2
+
+Para T2 se considera la interferencia de T1:
+
+```math
+R_2 =
+C_2 +
+\left\lceil\frac{R_2}{T_1}\right\rceil C_1
+```
+
+Iterando:
+
+```math
+R_2^{(0)} = 1
+```
+
+```math
+R_2^{(1)}
+= 1 + \left\lceil\frac{1}{4}\right\rceil 0,5
+= 1,5
+```
+
+```math
+R_2^{(2)}
+= 1 + \left\lceil\frac{1,5}{4}\right\rceil 0,5
+= 1,5
+```
+
+Por lo tanto:
+
+```math
+R_2 = 1,5
+```
+
+Comparando con su deadline:
+
+```math
+1,5 \leq 5
+```
+
+→ ✅
+
+**T2 cumple.**
+
+#### T3
+
+Para T3 se considera la interferencia de T1 y T2:
+
+```math
+R_3 =
+C_3 +
+\left\lceil\frac{R_3}{T_1}\right\rceil C_1 +
+\left\lceil\frac{R_3}{T_2}\right\rceil C_2
+```
+
+Iterando:
+
+```math
+R_3^{(0)} = 2
+```
+
+```math
+R_3^{(1)}
+= 2 +
+\left\lceil\frac{2}{4}\right\rceil 0,5 +
+\left\lceil\frac{2}{5}\right\rceil 1
+= 3,5
+```
+
+```math
+R_3^{(2)}
+= 2 +
+\left\lceil\frac{3,5}{4}\right\rceil 0,5 +
+\left\lceil\frac{3,5}{5}\right\rceil 1
+= 3,5
+```
+
+Por lo tanto:
+
+```math
+R_3 = 3,5
+```
+
+Comparando con su deadline:
+
+```math
+3,5 \leq 10
+```
+
+→ ✅
+
+**T3 cumple.**
+
+#### T4
+
+Para T4 se considera la interferencia de T1, T2 y T3:
+
+```math
+R_4 =
+C_4 +
+\left\lceil\frac{R_4}{T_1}\right\rceil C_1 +
+\left\lceil\frac{R_4}{T_2}\right\rceil C_2 +
+\left\lceil\frac{R_4}{T_3}\right\rceil C_3
+```
+
+Iterando:
+
+```math
+R_4^{(0)} = 9
+```
+
+```math
+R_4^{(1)}
+= 9 +
+\left\lceil\frac{9}{4}\right\rceil 0,5 +
+\left\lceil\frac{9}{5}\right\rceil 1 +
+\left\lceil\frac{9}{10}\right\rceil 2
+= 14,5
+```
+
+```math
+R_4^{(2)}
+= 9 +
+\left\lceil\frac{14,5}{4}\right\rceil 0,5 +
+\left\lceil\frac{14,5}{5}\right\rceil 1 +
+\left\lceil\frac{14,5}{10}\right\rceil 2
+= 18
+```
+
+```math
+R_4^{(3)}
+= 9 +
+\left\lceil\frac{18}{4}\right\rceil 0,5 +
+\left\lceil\frac{18}{5}\right\rceil 1 +
+\left\lceil\frac{18}{10}\right\rceil 2
+= 19,5
+```
+
+```math
+R_4^{(4)}
+= 9 +
+\left\lceil\frac{19,5}{4}\right\rceil 0,5 +
+\left\lceil\frac{19,5}{5}\right\rceil 1 +
+\left\lceil\frac{19,5}{10}\right\rceil 2
+= 19,5
+```
+
+Por lo tanto:
+
+```math
+R_4 = 19,5
+```
+
+Comparando con su deadline:
+
+```math
+19,5 \leq 24
+```
+
+→ ✅
+
+**T4 cumple.**
+
+---
+
+### Resumen
+
+| Tarea | Prioridad |   C |  T | Tiempo de respuesta | Deadline | Resultado |
+| ----- | --------: | --: | -: | ------------------: | -------: | --------- |
+| T1    |         1 | 0,5 |  4 |                 0,5 |        4 | Cumple    |
+| T2    |         2 |   1 |  5 |                 1,5 |        5 | Cumple    |
+| T3    |         3 |   2 | 10 |                 3,5 |       10 | Cumple    |
+| T4    |         4 |   9 | 24 |                19,5 |       24 | Cumple    |
+
+### Conclusión
+
+El Sistema 4 presenta un factor de utilización de:
+
+```math
+U = 90\%
+```
+
+El test suficiente de utilización de Rate Monotonic **no se cumple**:
+
+```math
+0,90 > 0,757
+```
+
+Sin embargo, el análisis de tiempos de respuesta muestra que todas las tareas cumplen sus respectivos deadlines:
+
+```math
+R_1 = 0,5 \leq 4
+```
+
+```math
+R_2 = 1,5 \leq 5
+```
+
+```math
+R_3 = 3,5 \leq 10
+```
+
+```math
+R_4 = 19,5 \leq 24
+```
+
+Por lo tanto, **el Sistema 4 es planificable mediante Rate Monotonic**, a pesar de no cumplir el test suficiente de utilización.
+
+El hiperperíodo del sistema es:
+
+```math
+H = 120
+```
+
+---
+
+### Diagrama de Gantt
+
+El hiperperíodo del sistema es:
+
+```math
+H = MCM(4,5,10,24) = 120
+```
+
+Las prioridades son:
+
+```text
+T1 > T2 > T3 > T4
+```
+
+En cada instante se ejecuta la tarea de mayor prioridad que se encuentre lista. Si se activa una tarea de mayor prioridad mientras se está ejecutando una tarea de menor prioridad, esta última es interrumpida.
+
+Para visualizar la planificación, se representa el comienzo del hiperperíodo hasta `t = 48`.
+
+```text
+Tiempo:  0   0,5  1,5  3,5  4  4,5  5  6  8  8,5  10  11  12  12,5  13,5  15  16  16,5  19,5  20  24  24,5  25  26  28  28,5  30  31  32  32,5  34,5  35  40  40,5  42  44  44,5  48
+         |----|-----|-----|--|----|---|--|--|----|----|---|---|----|------|-----|---|----|-----|-----|----|----|-----|---|---|--|----|----|---|---|----|-----|---|----|-----|---|---|----|
+Tarea:   | T1 | T2  | T3  |T4| T1 |T4|T2|T4| T1 | T4 |T2 |T3 | T1 | T3   | T4  |T2 | T1 | T4  | Idle |T1  | T4 | T1  |T2 |T4 |T1|T4  |T2  |T1|T4 |T2 |T3   |T1 |T4  |T1  |T2 |T4 |T1 |
+```
+
+### Detalle de la planificación
+
+En `t = 0` se activan las cuatro tareas. Se ejecuta primero T1 por tener la mayor prioridad:
+
+```math
+0 \rightarrow 0,5 : T1
+```
+
+Luego se ejecuta T2:
+
+```math
+0,5 \rightarrow 1,5 : T2
+```
+
+Después se ejecuta T3:
+
+```math
+1,5 \rightarrow 3,5 : T3
+```
+
+Luego comienza T4:
+
+```math
+3,5 \rightarrow 4 : T4
+```
+
+En `t = 4` se activa T1, que tiene mayor prioridad que T4, por lo que T4 es interrumpida:
+
+```math
+4 \rightarrow 4,5 : T1
+```
+
+T4 continúa:
+
+```math
+4,5 \rightarrow 5 : T4
+```
+
+En `t = 5` se activa T2:
+
+```math
+5 \rightarrow 6 : T2
+```
+
+T4 continúa:
+
+```math
+6 \rightarrow 8 : T4
+```
+
+En `t = 8` se activa T1:
+
+```math
+8 \rightarrow 8,5 : T1
+```
+
+T4 continúa:
+
+```math
+8,5 \rightarrow 10 : T4
+```
+
+En `t = 10` se activan T1 y T2. Se ejecuta primero T2:
+
+```math
+10 \rightarrow 11 : T2
+```
+
+Luego T3:
+
+```math
+11 \rightarrow 12 : T3
+```
+
+T1 se ejecuta a continuación:
+
+```math
+12 \rightarrow 12,5 : T1
+```
+
+T3 continúa:
+
+```math
+12,5 \rightarrow 13,5 : T3
+```
+
+T4 continúa:
+
+```math
+13,5 \rightarrow 15 : T4
+```
+
+En `t = 15` se activa T2:
+
+```math
+15 \rightarrow 16 : T2
+```
+
+En `t = 16` se activa T1:
+
+```math
+16 \rightarrow 16,5 : T1
+```
+
+T4 continúa:
+
+```math
+16,5 \rightarrow 19,5 : T4
+```
+
+Entre `t = 19,5` y `t = 20` no hay tareas listas:
+
+```math
+19,5 \rightarrow 20 : Idle
+```
+
+En `t = 20` se activan T1, T2 y T3. Se ejecuta T1:
+
+```math
+20 \rightarrow 20,5 : T1
+```
+
+Luego T2:
+
+```math
+20,5 \rightarrow 21,5 : T2
+```
+
+y T3:
+
+```math
+21,5 \rightarrow 23,5 : T3
+```
+
+Entre `t = 23,5` y `t = 24` el procesador queda libre:
+
+```math
+23,5 \rightarrow 24 : Idle
+```
+
+En `t = 24` se activa T1 y comienza T4:
+
+```math
+24 \rightarrow 24,5 : T1
+```
+
+```math
+24,5 \rightarrow 25 : T4
+```
+
+En `t = 25` se activa T2:
+
+```math
+25 \rightarrow 26 : T2
+```
+
+T4 continúa:
+
+```math
+26 \rightarrow 28 : T4
+```
+
+En `t = 28` se activa T1:
+
+```math
+28 \rightarrow 28,5 : T1
+```
+
+T4 continúa:
+
+```math
+28,5 \rightarrow 30 : T4
+```
+
+En `t = 30` se activa T2:
+
+```math
+30 \rightarrow 31 : T2
+```
+
+En `t = 31` se ejecuta T1:
+
+```math
+31 \rightarrow 31,5 : T1
+```
+
+T4 continúa:
+
+```math
+31,5 \rightarrow 32 : T4
+```
+
+En `t = 32` se activan T1 y T2. Se ejecuta T2:
+
+```math
+32 \rightarrow 33 : T2
+```
+
+Luego T3:
+
+```math
+33 \rightarrow 35 : T3
+```
+
+En `t = 35` se ejecuta T1:
+
+```math
+35 \rightarrow 35,5 : T1
+```
+
+T4 continúa:
+
+```math
+35,5 \rightarrow 40 : T4
+```
+
+En `t = 40` se activa T1:
+
+```math
+40 \rightarrow 40,5 : T1
+```
+
+Luego T2:
+
+```math
+40,5 \rightarrow 41,5 : T2
+```
+
+T4 continúa:
+
+```math
+41,5 \rightarrow 44 : T4
+```
+
+En `t = 44` se activa T1:
+
+```math
+44 \rightarrow 44,5 : T1
+```
+
+T4 continúa:
+
+```math
+44,5 \rightarrow 48 : T4
+```
+
+### Resultado del Gantt
+
+El Gantt muestra que T4, al ser la tarea de menor prioridad, puede ser interrumpida varias veces por las tareas de mayor prioridad.
+
+Por ejemplo, T4 comienza en:
+
+```math
+3,5 \rightarrow 4
+```
+
+pero es interrumpida por T1 en `t = 4`.
+
+Luego continúa en:
+
+```math
+4,5 \rightarrow 5
+```
+
+y vuelve a ser interrumpida por T2 en `t = 5`.
+
+Este comportamiento es propio de Rate Monotonic: **las tareas de mayor prioridad pueden interrumpir a las de menor prioridad**.
+
+El análisis de tiempos de respuesta confirma que todas las tareas cumplen sus respectivos deadlines:
+
+```math
+R_1 = 0,5 \leq 4
+```
+
+```math
+R_2 = 1,5 \leq 5
+```
+
+```math
+R_3 = 3,5 \leq 10
+```
+
+```math
+R_4 = 19,5 \leq 24
+```
+
+Por lo tanto, **el Sistema 4 es planificable mediante Rate Monotonic**.
+
+---
 
 # Configuración de FreeRTOS para Rate Monotonic Scheduling
 
