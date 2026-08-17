@@ -1371,6 +1371,44 @@ Por lo tanto, **el Sistema 3 es planificable mediante Rate Monotonic**.
 
 ---
 
+# Configuración de FreeRTOS para Rate Monotonic Scheduling
+
+Para implementar una planificación **Rate Monotonic (RM)** utilizando FreeRTOS se debe utilizar un esquema de planificación **basado en prioridades**, asignando a cada tarea una prioridad fija de acuerdo con su período.
+
+La regla de Rate Monotonic establece que las tareas con **menor período tienen mayor prioridad**. Por lo tanto, si se tienen varias tareas periódicas:
+
+```math
+T_1 < T_2 < T_3 < T_4
+````
+
+las prioridades deben asignarse en el orden:
+
+```math
+P_1 > P_2 > P_3 > P_4
+```
+
+De esta manera, cuando varias tareas están listas para ejecutarse, FreeRTOS selecciona la tarea de mayor prioridad.
+
+Las tareas deben configurarse como tareas periódicas, manteniendo sus respectivos períodos de activación. El **tick del sistema** se utiliza como referencia temporal para realizar estas activaciones. Las diapositivas indican que el tick es generado mediante un timer del microcontrolador y que su elección representa un compromiso entre el tiempo de respuesta y el costo de ejecución del scheduler.
+
+A diferencia de Cyclic Scheduling, en Rate Monotonic no se utiliza un calendario estático que determine de antemano qué tarea se ejecuta en cada instante. Las tareas son seleccionadas dinámicamente por el scheduler según sus prioridades.
+
+La configuración general debe contemplar:
+
+* tareas periódicas independientes;
+* una prioridad fija para cada tarea;
+* mayor prioridad para las tareas de menor período;
+* un tick de sistema adecuado para representar los períodos de las tareas;
+* utilización del scheduler de FreeRTOS para seleccionar la tarea de mayor prioridad;
+* tareas que respeten sus respectivos deadlines.
+
+Este esquema permite implementar una planificación basada en prioridades y analizar si las tareas cumplen sus restricciones temporales.
+
+### Conclusión
+
+FreeRTOS resulta adecuado para implementar Rate Monotonic Scheduling, ya que permite trabajar con **tareas periódicas y prioridades**, dejando que el scheduler seleccione la tarea de mayor prioridad cuando varias tareas están listas para ejecutarse.
+
+La asignación de prioridades debe realizarse de acuerdo con el período de cada tarea: **a menor período, mayor prioridad**.
 
 ---
 
