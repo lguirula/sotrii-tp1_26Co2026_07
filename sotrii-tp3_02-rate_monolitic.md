@@ -1,3 +1,4 @@
+#  Parte 1 : Ánalisis de los sistemas
 ## Sistema 1 – Rate Monotonic
 
 ### Datos
@@ -70,9 +71,9 @@ Período secundario: no aplica
 
 ---
 
-## Test de Garantía
+### Test de Garantía
 
-### 1. Prioridades
+#### 1. Prioridades
 
 Las prioridades se asignan según el período:
 
@@ -86,7 +87,7 @@ Por lo tanto:
 T1 > T2 > T3
 ```
 
-### 2. Factor de utilización
+#### 2. Factor de utilización
 
 ```math
 U = 0,90 < 1
@@ -96,7 +97,7 @@ U = 0,90 < 1
 
 El factor de carga total es menor al 100%.
 
-### 3. Test de utilización de Rate Monotonic
+#### 3. Test de utilización de Rate Monotonic
 
 Para `n = 3` tareas, el límite suficiente de utilización de Rate Monotonic es:
 
@@ -128,11 +129,11 @@ El sistema **no cumple el test suficiente de utilización de Rate Monotonic**.
 
 Esto no significa necesariamente que el sistema sea imposible de planificar. El test de utilización es una condición suficiente, no necesaria.
 
-### 4. Análisis de tiempos de respuesta
+#### 4. Análisis de tiempos de respuesta
 
 Para verificar si las tareas cumplen sus deadlines, se analiza el peor tiempo de respuesta considerando las tareas de mayor prioridad.
 
-#### T1
+##### T1
 
 Como T1 tiene la mayor prioridad:
 
@@ -154,7 +155,7 @@ Comparando con su deadline:
 
 **T1 cumple.**
 
-#### T2
+##### T2
 
 Para T2 se considera la interferencia de T1:
 
@@ -192,7 +193,7 @@ Comparando con su deadline:
 
 **T2 cumple.**
 
-#### T3
+##### T3
 
 Para T3 se considera la interferencia de T1 y T2:
 
@@ -274,7 +275,7 @@ Comparando con su deadline:
 
 ---
 
-## Resumen
+### Resumen
 
 | Tarea | Prioridad |  C |  T | Tiempo de respuesta | Deadline | Resultado |
 | ----- | --------: | -: | -: | ------------------: | -------: | --------- |
@@ -317,7 +318,7 @@ El hiperperíodo del sistema es:
 ```math
 H = 20
 ```
-## Diagrama de Gantt
+### Diagrama de Gantt
 
 El hiperperíodo del sistema es:
 
@@ -349,6 +350,414 @@ Dentro del hiperperíodo se completan todas las ejecuciones correspondientes a l
 
 Por lo tanto, el diagrama de Gantt confirma la planificación obtenida mediante Rate Monotonic para el Sistema 1.
 ---
+
+## Sistema 2 – Rate Monotonic
+
+### Datos
+
+| Tarea | C | T = D | Prioridad |
+| ----- | -: | ----: | --------: |
+| T1    | 1 |     6 | 1 |
+| T2    | 2 |    10 | 2 |
+| T3    | 2 |    18 | 3 |
+
+En Rate Monotonic,  **a menor período, mayor prioridad**.
+
+Por lo tanto:
+
+```text
+T1 > T2 > T3
+````
+
+### Factor de utilización
+
+El factor de utilización de cada tarea es:
+
+```math
+U_i = \frac{C_i}{T_i}
+```
+
+```math
+U_1 = \frac{1}{6} = 0,167
+```
+
+```math
+U_2 = \frac{2}{10} = 0,20
+```
+
+```math
+U_3 = \frac{2}{18} = 0,111
+```
+
+Por lo tanto:
+
+```math
+U = 0,167 + 0,20 + 0,111 = 0,478
+```
+
+```math
+U \approx 47,8\%
+```
+
+### Hiperperíodo
+
+El hiperperíodo se obtiene como el mínimo común múltiplo de los períodos:
+
+```math
+H = MCM(6,10,18)
+```
+
+```math
+H = 90
+```
+
+### Período secundario
+
+El período secundario corresponde al Cyclic Scheduling. Para Rate Monotonic **no se utiliza como parámetro de planificación**, ya que el planificador trabaja mediante prioridades.
+
+Por lo tanto:
+
+```text
+Período secundario: no aplica
+```
+
+---
+
+### Test de Garantía
+
+#### 1. Prioridades
+
+Las prioridades se asignan según el período:
+
+* T1: `T = 6` → prioridad 1
+* T2: `T = 10` → prioridad 2
+* T3: `T = 18` → prioridad 3
+
+Por lo tanto:
+
+```text
+T1 > T2 > T3
+```
+
+#### 2. Factor de utilización
+
+```math
+U = 0,478 < 1
+```
+
+**Condición de carga: CUMPLE.**
+
+El factor de carga total es menor al 100%.
+
+#### 3. Test de utilización de Rate Monotonic
+
+Para `n = 3` tareas, el límite suficiente de utilización de Rate Monotonic es:
+
+```math
+U_{RM} = n(2^{1/n}-1)
+```
+
+```math
+U_{RM} = 3(2^{1/3}-1)
+```
+
+```math
+U_{RM} \approx 0,780
+```
+
+El sistema tiene:
+
+```math
+U = 0,478
+```
+
+Por lo tanto:
+
+```math
+0,478 < 0,780
+```
+
+**Test de utilización: CUMPLE.**
+
+Al cumplirse el límite suficiente de utilización, el sistema es planificable mediante Rate Monotonic.
+
+---
+
+### Análisis de tiempos de respuesta
+
+#### T1
+
+Como T1 tiene la mayor prioridad:
+
+```math
+R_1 = C_1
+```
+
+```math
+R_1 = 1
+```
+
+Comparando con su deadline:
+
+```math
+1 \leq 6
+```
+
+→ ✅
+
+**T1 cumple.**
+
+#### T2
+
+Para T2 se considera la interferencia de T1:
+
+```math
+R_2 =
+C_2 +
+\left\lceil\frac{R_2}{T_1}\right\rceil C_1
+```
+
+Iterando:
+
+```math
+R_2^{(0)} = 2
+```
+
+```math
+R_2^{(1)}
+= 2 + \left\lceil\frac{2}{6}\right\rceil 1
+= 3
+```
+
+```math
+R_2^{(2)}
+= 2 + \left\lceil\frac{3}{6}\right\rceil 1
+= 3
+```
+
+Por lo tanto:
+
+```math
+R_2 = 3
+```
+
+Comparando con su deadline:
+
+```math
+3 \leq 10
+```
+
+→ ✅
+
+**T2 cumple.**
+
+#### T3
+
+Para T3 se considera la interferencia de T1 y T2:
+
+```math
+R_3 =
+C_3 +
+\left\lceil\frac{R_3}{T_1}\right\rceil C_1 +
+\left\lceil\frac{R_3}{T_2}\right\rceil C_2
+```
+
+Iterando:
+
+```math
+R_3^{(0)} = 2
+```
+
+```math
+R_3^{(1)}
+= 2 +
+\left\lceil\frac{2}{6}\right\rceil 1 +
+\left\lceil\frac{2}{10}\right\rceil 2
+= 5
+```
+
+```math
+R_3^{(2)}
+= 2 +
+\left\lceil\frac{5}{6}\right\rceil 1 +
+\left\lceil\frac{5}{10}\right\rceil 2
+= 5
+```
+
+Por lo tanto:
+
+```math
+R_3 = 5
+```
+
+Comparando con su deadline:
+
+```math
+5 \leq 18
+```
+
+→ ✅
+
+**T3 cumple.**
+
+---
+
+### Resumen
+
+| Tarea | Prioridad |  C |  T | Tiempo de respuesta | Deadline | Resultado |
+| ----- | --------: | -: | -: | ------------------: | -------: | --------- |
+| T1    |         1 |  1 |  6 |                   1 |        6 | Cumple    |
+| T2    |         2 |  2 | 10 |                   3 |       10 | Cumple    |
+| T3    |         3 |  2 | 18 |                   5 |       18 | Cumple    |
+
+### Conclusión
+
+El Sistema 2 presenta un factor de utilización de:
+
+```math
+U \approx 47,8\%
+```
+
+El test suficiente de utilización de Rate Monotonic se cumple:
+
+```math
+0,478 < 0,780
+```
+
+Además, el análisis de tiempos de respuesta confirma que todas las tareas cumplen sus deadlines:
+
+```math
+R_1 = 1 \leq 6
+```
+
+```math
+R_2 = 3 \leq 10
+```
+
+```math
+R_3 = 5 \leq 18
+```
+
+Por lo tanto, **el Sistema 2 es planificable mediante Rate Monotonic**.
+
+El hiperperíodo del sistema es:
+
+```math
+H = 90
+```
+
+---
+
+### Diagrama de Gantt
+
+El hiperperíodo del sistema es:
+
+```math
+H = MCM(6,10,18) = 90
+```
+
+Las prioridades son:
+
+```text
+T1 > T2 > T3
+```
+
+Para visualizar la planificación, se representa el comienzo del hiperperíodo:
+
+```text
+Tiempo:  0    1    3    6    7    9   10   12   13   18   19   20   22   24   25   30
+         |----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+Tarea:   | T1 | T2 | T3 | T1 | T2 |Idle| T1 | T3 |Idle| T1 | T2 | T3 | T1 | T2 |Idle| ... |
+```
+
+#### Detalle de la planificación
+
+En `t = 0` se activan las tres tareas. Se ejecuta primero T1 por tener la mayor prioridad:
+
+```math
+0 \rightarrow 1 : T1
+```
+
+Luego se ejecuta T2:
+
+```math
+1 \rightarrow 3 : T2
+```
+
+y posteriormente T3:
+
+```math
+3 \rightarrow 5 : T3
+```
+
+En `t = 6` se activa nuevamente T1:
+
+```math
+6 \rightarrow 7 : T1
+```
+
+Luego T2:
+
+```math
+7 \rightarrow 9 : T2
+```
+
+Entre `t = 9` y `t = 10` no hay tareas listas:
+
+```math
+9 \rightarrow 10 : Idle
+```
+
+En `t = 10` se activa T1 y luego T3:
+
+```math
+10 \rightarrow 11 : T1
+```
+
+```math
+11 \rightarrow 13 : T3
+```
+
+Entre `t = 13` y `t = 18` el procesador queda libre.
+
+En `t = 18` se activa nuevamente T1:
+
+```math
+18 \rightarrow 19 : T1
+```
+
+Luego T2:
+
+```math
+19 \rightarrow 21 : T2
+```
+
+y T3:
+
+```math
+21 \rightarrow 23 : T3
+```
+
+La misma lógica continúa durante el resto del hiperperíodo.
+
+#### Resultado del Gantt
+
+El Gantt muestra que el planificador ejecuta siempre la tarea de mayor prioridad que se encuentra lista:
+
+```text
+T1 > T2 > T3
+```
+
+Las tareas pueden ser interrumpidas por tareas de mayor prioridad cuando estas se activan.
+
+De acuerdo con el análisis de tiempos de respuesta, todas las tareas cumplen sus respectivos deadlines.
+
+Por lo tanto, **el Sistema 2 puede ser planificado mediante Rate Monotonic**.
+
+
+
+---
+
 ## Sistema 3 – Rate Monotonic
 
 ### Datos
