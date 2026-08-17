@@ -608,4 +608,542 @@ El mismo criterio se cumple para las restantes instancias durante todo el hiperp
 
 El Diagrama de Gantt permite verificar que todas las instancias de las tareas pueden ubicarse dentro del hiperperíodo de 90 unidades de tiempo, respetando sus períodos y deadlines.
 
+---
+## Sistema 3 – Cyclic Scheduling
 
+### Datos
+
+| Tarea |  C | T = D |
+| ----- | -: | ----: |
+| T1    |  1 |     8 |
+| T2    |  3 |    15 |
+| T3    |  4 |    20 |
+| T4    |  6 |    22 |
+
+### Factor de utilización
+
+El factor de utilización de cada tarea es:
+
+```math
+U_i = \frac{C_i}{T_i}
+```
+
+```math
+U_1 = \frac{1}{8} = 0,125
+```
+
+```math
+U_2 = \frac{3}{15} = 0,20
+```
+
+```math
+U_3 = \frac{4}{20} = 0,20
+```
+
+```math
+U_4 = \frac{6}{22} = 0,273
+```
+
+Por lo tanto:
+
+```math
+U = 0,125 + 0,20 + 0,20 + 0,273 = 0,798
+```
+
+```math
+U \approx 79,8\%
+```
+
+### Hiperperíodo
+
+El hiperperíodo se obtiene como el mínimo común múltiplo de los períodos:
+
+```math
+H = MCM(8,15,20,22)
+```
+
+```math
+H = 1320
+```
+
+### Período secundario
+
+Según las diapositivas, el período secundario se obtiene como el máximo común divisor de los períodos de las tareas.
+
+```math
+T_S = MCD(8,15,20,22)
+```
+
+```math
+T_S = 1
+```
+
+---
+
+## Test de Garantía
+
+### 1. Cada tarea debe terminar en un único ciclo secundario
+
+Debe cumplirse:
+
+```math
+C_i \leq T_S
+```
+
+Como:
+
+```math
+T_S = 1
+```
+
+tenemos:
+
+* T1: `1 ≤ 1` → ✅
+* T2: `3 ≤ 1` → ❌
+* T3: `4 ≤ 1` → ❌
+* T4: `6 ≤ 1` → ❌
+
+**Condición 1: NO CUMPLE.**
+
+Por lo tanto, las tareas T2, T3 y T4 no pueden terminar dentro de un único ciclo secundario.
+
+### 2. Factor de utilización
+
+```math
+U = 0,798 < 1
+```
+
+**Condición 2: CUMPLE.**
+
+El factor de carga del sistema es menor al 100%.
+
+### 3. Hiperperíodo
+
+```math
+H = 1320
+```
+
+Dentro de un hiperperíodo:
+
+```math
+1320/8 = 165
+```
+
+```math
+1320/15 = 88
+```
+
+```math
+1320/20 = 66
+```
+
+```math
+1320/22 = 60
+```
+
+Todas las tareas se ejecutan un número entero de veces.
+
+**Condición 3: CUMPLE.**
+
+### 4. El período de cada tarea debe ser múltiplo entero del ciclo secundario
+
+Como:
+
+```math
+T_S = 1
+```
+
+tenemos:
+
+```math
+8/1 = 8
+```
+
+```math
+15/1 = 15
+```
+
+```math
+20/1 = 20
+```
+
+```math
+22/1 = 22
+```
+
+Todos los resultados son enteros.
+
+**Condición 4: CUMPLE.**
+
+### 5. Cada tarea debe terminar antes de un nuevo período de activación
+
+Debe cumplirse:
+
+```math
+C_i \leq T_i
+```
+
+* T1: `1 ≤ 8` → ✅
+* T2: `3 ≤ 15` → ✅
+* T3: `4 ≤ 20` → ✅
+* T4: `6 ≤ 22` → ✅
+
+**Condición 5: CUMPLE.**
+
+---
+
+## Resumen
+
+| Condición                  | Resultado     |
+| -------------------------- | ------------- |
+| 1. `C_i ≤ T_S`             | **No cumple** |
+| 2. `U < 1`                 | Cumple        |
+| 3. Hiperperíodo            | Cumple        |
+| 4. `T_i` múltiplo de `T_S` | Cumple        |
+| 5. `C_i ≤ T_i`             | Cumple        |
+
+### Conclusión
+
+El Sistema 3 tiene un factor de utilización de:
+
+```math
+U \approx 79,8\%
+```
+
+un hiperperíodo de:
+
+```math
+H = 1320
+```
+
+y un período secundario de:
+
+```math
+T_S = 1
+```
+
+Sin embargo, **no cumple el Test de Garantía**, porque las tareas T2, T3 y T4 tienen un tiempo de ejecución mayor que el período secundario:
+
+```math
+C_2 = 3 > 1
+```
+
+```math
+C_3 = 4 > 1
+```
+
+```math
+C_4 = 6 > 1
+```
+
+Por lo tanto, **el Sistema 3 no puede ser planificado mediante Cyclic Scheduling sin segmentar las tareas**.
+
+Las diapositivas indican que, cuando no es posible confeccionar un plan cíclico pero `U ≤ 1`, es posible recurrir a la **segmentación de tareas**, dividiendo una tarea en segmentos de tiempo de cómputo conocido.
+---
+
+## Sistema 4 – Cyclic Scheduling
+
+### Datos
+
+| Tarea |   C | T = D |
+| ----- | --: | ----: |
+| T1    | 0,5 |     4 |
+| T2    |   1 |     5 |
+| T3    |   2 |    10 |
+| T4    |   9 |    24 |
+
+### Factor de utilización
+
+El factor de utilización de cada tarea es:
+
+```math
+U_i = \frac{C_i}{T_i}
+```
+
+```math
+U_1 = \frac{0,5}{4} = 0,125
+```
+
+```math
+U_2 = \frac{1}{5} = 0,20
+```
+
+```math
+U_3 = \frac{2}{10} = 0,20
+```
+
+```math
+U_4 = \frac{9}{24} = 0,375
+```
+
+Por lo tanto:
+
+```math
+U = 0,125 + 0,20 + 0,20 + 0,375 = 0,90
+```
+
+```math
+U = 90\%
+```
+
+### Hiperperíodo
+
+El hiperperíodo se obtiene como el mínimo común múltiplo de los períodos:
+
+```math
+H = MCM(4,5,10,24)
+```
+
+```math
+H = 120
+```
+
+### Período secundario
+
+Según las diapositivas, el período secundario se obtiene como el máximo común divisor de los períodos de las tareas.
+
+```math
+T_S = MCD(4,5,10,24)
+```
+
+```math
+T_S = 1
+```
+
+---
+
+## Test de Garantía
+
+### 1. Cada tarea debe terminar en un único ciclo secundario
+
+Debe cumplirse:
+
+```math
+C_i \leq T_S
+```
+
+Como:
+
+```math
+T_S = 1
+```
+
+tenemos:
+
+* T1: `0,5 ≤ 1` → ✅
+* T2: `1 ≤ 1` → ✅
+* T3: `2 ≤ 1` → ❌
+* T4: `9 ≤ 1` → ❌
+
+**Condición 1: NO CUMPLE.**
+
+Las tareas T3 y T4 no pueden terminar dentro de un único ciclo secundario.
+
+### 2. Factor de utilización
+
+```math
+U = 0,90 < 1
+```
+
+**Condición 2: CUMPLE.**
+
+El factor de carga del sistema es menor al 100%.
+
+### 3. Hiperperíodo
+
+```math
+H = 120
+```
+
+Dentro de un hiperperíodo:
+
+```math
+120/4 = 30
+```
+
+```math
+120/5 = 24
+```
+
+```math
+120/10 = 12
+```
+
+```math
+120/24 = 5
+```
+
+Todas las tareas se ejecutan un número entero de veces.
+
+**Condición 3: CUMPLE.**
+
+### 4. El período de cada tarea debe ser múltiplo entero del ciclo secundario
+
+Como:
+
+```math
+T_S = 1
+```
+
+tenemos:
+
+```math
+4/1 = 4
+```
+
+```math
+5/1 = 5
+```
+
+```math
+10/1 = 10
+```
+
+```math
+24/1 = 24
+```
+
+Todos los resultados son enteros.
+
+**Condición 4: CUMPLE.**
+
+### 5. Cada tarea debe terminar antes de un nuevo período de activación
+
+Debe cumplirse:
+
+```math
+C_i \leq T_i
+```
+
+* T1: `0,5 ≤ 4` → ✅
+* T2: `1 ≤ 5` → ✅
+* T3: `2 ≤ 10` → ✅
+* T4: `9 ≤ 24` → ✅
+
+**Condición 5: CUMPLE.**
+
+---
+
+## Resumen
+
+| Condición                  | Resultado     |
+| -------------------------- | ------------- |
+| 1. `C_i ≤ T_S`             | **No cumple** |
+| 2. `U < 1`                 | Cumple        |
+| 3. Hiperperíodo            | Cumple        |
+| 4. `T_i` múltiplo de `T_S` | Cumple        |
+| 5. `C_i ≤ T_i`             | Cumple        |
+
+### Conclusión
+
+El Sistema 4 tiene un factor de utilización de:
+
+```math
+U = 90\%
+```
+
+un hiperperíodo de:
+
+```math
+H = 120
+```
+
+y un período secundario de:
+
+```math
+T_S = 1
+```
+
+Sin embargo, **no cumple el Test de Garantía**, porque las tareas T3 y T4 tienen un tiempo de ejecución mayor que el período secundario:
+
+```math
+C_3 = 2 > 1
+```
+
+```math
+C_4 = 9 > 1
+```
+
+Por lo tanto, **el Sistema 4 no puede ser planificado mediante Cyclic Scheduling sin segmentar las tareas**.
+
+Las diapositivas indican que, cuando no es posible confeccionar un plan cíclico pero `U ≤ 1`, es posible utilizar **segmentación de tareas**, dividiendo una tarea en segmentos cuyo tiempo de cómputo sea conocido.
+## Diagrama de Gantt
+
+Para el Sistema 4 se tiene:
+
+```math
+T_S = 1
+```
+
+Por lo tanto, cada ciclo secundario tiene una duración de `1` unidad de tiempo.
+
+Las tareas tienen los siguientes tiempos de ejecución:
+
+| Tarea |   C |
+| ----- | --: |
+| T1    | 0,5 |
+| T2    |   1 |
+| T3    |   2 |
+| T4    |   9 |
+
+T1 y T2 pueden ejecutarse dentro de un único ciclo secundario:
+
+```text
+Tiempo:  0    1    2    3    4    5    ...
+         |----|----|----|----|----|----|
+T1:      |0,5 |
+T2:           |----|
+```
+
+Sin embargo, T3 necesita `2` unidades de tiempo y T4 necesita `9` unidades de tiempo:
+
+```math
+C_3 = 2 > T_S = 1
+```
+
+```math
+C_4 = 9 > T_S = 1
+```
+
+Por lo tanto, ninguna de estas tareas puede ejecutarse completamente dentro de un único ciclo secundario.
+
+El intento de planificación queda representado de forma esquemática como:
+
+```text
+Tiempo:  0    1    2    3    4    5    6    7    8    9
+         |----|----|----|----|----|----|----|----|----|
+         T_S  T_S  T_S  T_S  T_S  T_S  T_S  T_S  T_S
+
+T1:      |0,5 |
+T2:           |----|
+
+T3:                |---------|
+                   <--- 2 --->
+
+T4:                           |-------------------------------------|
+                              <----------- 9 ----------------------->
+```
+
+T3 y T4 ocupan más de un ciclo secundario, por lo que la planificación no cumple la primera condición del Test de Garantía.
+
+### Resultado del Gantt
+
+El diagrama permite visualizar el problema de planificación:
+
+```math
+C_3 > T_S
+```
+
+```math
+C_4 > T_S
+```
+
+Por lo tanto, **no es posible construir un Gantt válido para el Sistema 4 utilizando el Cyclic Scheduling original sin segmentar las tareas**.
+
+La segmentación de tareas podría utilizarse como alternativa, ya que el factor de utilización cumple:
+
+```math
+U = 0,90 \leq 1
+```
+
+pero dicha alternativa corresponde a una planificación diferente y no al Cyclic Scheduling original analizado en este sistema.
