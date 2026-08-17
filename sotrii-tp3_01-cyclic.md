@@ -1069,6 +1069,7 @@ C_4 = 9 > 1
 Por lo tanto, **el Sistema 4 no puede ser planificado mediante Cyclic Scheduling sin segmentar las tareas**.
 
 Las diapositivas indican que, cuando no es posible confeccionar un plan cíclico pero `U ≤ 1`, es posible utilizar **segmentación de tareas**, dividiendo una tarea en segmentos cuyo tiempo de cómputo sea conocido.
+
 ## Diagrama de Gantt
 
 Para el Sistema 4 se tiene:
